@@ -45,6 +45,7 @@ A CentOS 8 Stream environment with Rust was provided using VirtualBOX using the 
 		2. SATA port0 HDD: 32GB
 	4. Network:
 		1. Adapter 1: Bridged Adapter
+
 ![](VBoxVMspecs.png)_Creating VBox for Linux_
 
 4. Start the new CentOS8s VM. It should boot from the attached CD image and start the CentOS Linux installer. When the installer boot selection appears, press the `UP ARROW` key to select the *Install* option and press `ENTER`.
