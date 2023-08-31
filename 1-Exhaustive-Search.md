@@ -158,27 +158,27 @@ fn do_exhaustive_search(items: &mut Vec<Item>, allowed_weight: i32, next_index: 
         // Make a copy of this assignment.
         let mut items_copy = copy_items(items);
         // Return the assignment and its total value.
-        let items_value = sum_values(&mut items_copy, false);
-        return (items_copy, items_value, 0);
+        let items_value = solution_value(&mut items_copy, allowed_weight);
+        return (items_copy, items_value, 1);
     }
     // We do not have a full assignment.
     // Try adding the next item.
     items[next_index as usize].is_selected = true;
     // Recursively call the function.
-	let mut solution_1: Vec<Item>;
+	let solution_1: Vec<Item>;
     let total_value_1: i32;
-    let mut function_calls: i32;
+    let function_calls_1: i32;
     let new_index = next_index + 1;
-    (solution_1, total_value_1, function_calls) = do_exhaustive_search(items, allowed_weight, new_index);
-	function_calls += 1;
+    (solution_1, total_value_1, function_calls_1) = do_exhaustive_search(items, allowed_weight, new_index);
     // Try not adding the next item.
     items[next_index as usize].is_selected = false;    
     // Recursively call the function.
-	let mut solution_2: Vec<Item>;
+	let solution_2: Vec<Item>;
     let total_value_2: i32;
-    (solution_2, total_value_2, function_calls) = do_exhaustive_search(items, allowed_weight, new_index);
-	function_calls += 1;
+    let function_calls_2: i32;
+    (solution_2, total_value_2, function_calls_2) = do_exhaustive_search(items, allowed_weight, new_index);
     // Return the solution that is better.
+    let function_calls = function_calls_1 + function_calls_2;
     if total_value_1 >= total_value_2 {
 //		print_selected(&mut solution_1);
         return (solution_1, total_value_1, function_calls);
@@ -188,7 +188,6 @@ fn do_exhaustive_search(items: &mut Vec<Item>, allowed_weight: i32, next_index: 
     }
 }
 ```
-
 
 Partial solution provided with the Milestone specifications is available HERE: [m1-xsearch-partial.rs](m1-xsearch-partial.rs.md)
 
