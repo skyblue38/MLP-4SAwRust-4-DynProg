@@ -165,7 +165,7 @@ fn do_exhaustive_search(items: &mut Vec<Item>, allowed_weight: i32, next_index: 
     // Try adding the next item.
     items[next_index as usize].is_selected = true;
     // Recursively call the function.
-	let solution_1: Vec<Item>;
+    let solution_1: Vec<Item>;
     let total_value_1: i32;
     let function_calls_1: i32;
     let new_index = next_index + 1;
@@ -173,7 +173,7 @@ fn do_exhaustive_search(items: &mut Vec<Item>, allowed_weight: i32, next_index: 
     // Try not adding the next item.
     items[next_index as usize].is_selected = false;    
     // Recursively call the function.
-	let solution_2: Vec<Item>;
+    let solution_2: Vec<Item>;
     let total_value_2: i32;
     let function_calls_2: i32;
     (solution_2, total_value_2, function_calls_2) = do_exhaustive_search(items, allowed_weight, new_index);
@@ -188,6 +188,28 @@ fn do_exhaustive_search(items: &mut Vec<Item>, allowed_weight: i32, next_index: 
     }
 }
 ```
+### 11. test run
+When executed, the following output was produced:
+``` text
+[sysadmin@centos8s ~]$ cd MLP/FSAwRust-4-Dynamic/m1-xsearch
+[sysadmin@centos8s m1-xsearch]$ cargo run --release
+   Compiling m1-xsearch v0.1.0 (/home/sysadmin/MLP/FSAwRust-4-Dynamic/m1-xsearch)
+    Finished release [optimized] target(s) in 0.64s
+     Running `target/release/m1-xsearch`
+*** Parameters ***
+# items:        20
+Total value:    93
+Total weight:   144
+Allowed weight: 72
+
+*** Exhaustive Search ***
+Elapsed: 189.417408ms
+3(7, 9) 6(9, 5) 9(4, 4) 10(6, 4) 11(8, 8) 13(8, 9) 14(7, 5) 15(5, 7) 16(5, 7) 17(7, 7) 19(7, 7) 
+Value: 73, Weight: 72, Calls: 1048576
+
+[sysadmin@centos8s m1-xsearch]$ 
+```
+**Note**: This concurs with the expected output published in the project solution.
 
 Partial solution provided with the Milestone specifications is available HERE: [m1-xsearch-partial.rs](m1-xsearch-partial.rs.md)
 
