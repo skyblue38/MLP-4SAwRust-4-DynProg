@@ -53,6 +53,41 @@ Elapsed: 103.886204ms
 Value: 73, Weight: 72, Calls: 532061
 ```
 
+These result have the same item solution as that given in the project guide, but the number of calls is way larger ?  This was due to a misunderstanding the in testing of boundary conditions. After combining code from the suggested solution, a repeat run produced the following output:
+``` bash
+*** Parameters ***
+No.items:       20
+Total value:    93
+Total weight:   144
+Allowed weight: 72
+
+*** Branch and Bound ***
+Elapsed: 550.757µs
+3(7, 9) 6(9, 5) 9(4, 4) 10(6, 4) 11(8, 8) 13(8, 9) 14(7, 5) 15(5, 7) 16(5, 7) 17(7, 7) 19(7, 7) 
+Value: 73, Weight: 72, Calls: 43093
+
+```
+
+Just for fun, a run with 48 items was attempted, and after about 14 minutes, the output was:
+``` bash
+*** Parameters ***
+No.items:        48
+Total value:    224
+Total weight:   326
+Allowed weight: 163
+
+*** Branch and Bound ***
+Elapsed: 803.344007957s
+2(4, 6) 3(7, 9) 6(9, 5) 9(4, 4) 10(6, 4) 11(8, 8) 13(8, 9) 14(7, 5) 15(5, 7) 17(7, 7) 19(7, 7) 20(7, 5) 21(3, 4) 24(5, 5) 25(6, 6) 28(7, 8) 32(6, 5) 33(8, 9) 37(7, 6) 38(9, 4) 39(9, 8) 40(8, 4) 42(7, 9) 44(8, 7) 45(5, 6) 46(5, 6) 
+Value: 172, Weight: 163, Calls: 761209211
+
+
+```
+
+
+
+
+
 ### (end)
 
 ?
