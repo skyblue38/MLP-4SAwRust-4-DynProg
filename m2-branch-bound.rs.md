@@ -32,11 +32,11 @@ fn main() {
     println!("Total weight:   {}", sum_weights(&mut items, true));
     println!("Allowed weight: {}", allowed_weight);
     println!();
-    // Exhaustive search
-    if NUM_ITEMS > 40 {  // Only run branch_and_bound if num_items is small enough.
+    // Branch and Bound search
+    if NUM_ITEMS > 48 {  // Only run branch_and_bound if num_items is small enough.
         println!("Too many items for branch_and_bound search");
     } else {
-        println!("*** Brnach and Bound ***");
+        println!("*** Branch and Bound ***");
         run_algorithm(&branch_and_bound, &mut items, allowed_weight);
     }
 }
@@ -78,7 +78,7 @@ fn sum_weights(items: &mut Vec<Item>, add_all: bool) -> i32 {
 fn solution_value(items: &mut Vec<Item>, allowed_weight: i32) -> i32 {
     // If the solution's total weight > allowed_weight,
     // return -1 so even an empty solution is better.
-    if sum_weights(items, false) > allowed_weight { return -1; }
+    if sum_weights(items, false) > allowed_weight { return 0; }
     // Return the sum of the selected values.
     return sum_values(items, false);
 }
@@ -115,31 +115,28 @@ fn branch_and_bound(items: &mut Vec<Item>, allowed_weight: i32) -> (Vec<Item>, i
 		best_value, current_value, current_weight, remaining_value);
 }
 fn do_branch_and_bound(items: &mut Vec<Item>, allowed_weight: i32, next_index: i32,
-		best_value: i32, current_value: i32, current_weight: i32, remaining_value: i32)
+		mut best_value: i32, current_value: i32, current_weight: i32, remaining_value: i32)
         -> (Vec<Item>, i32, i32) {
     // println!("Items {:?}\nAllowed weight: {}, nextItem: {}\n {} {} {} {}",
 	//     items, allowed_weight, next_index, best_value, current_value, 
-	//     current_weiaght, remaining_value);
+	//     current_weight, remaining_value);
     // See if we have a full assignment. (b)
     if next_index >= items.len() as i32 {
         // Make a copy of this assignment.
-        let mut items_copy = copy_items(items);
+        let items_copy = copy_items(items);
         // Return the assignment and its total value.
-        let items_value = solution_value(&mut items_copy, allowed_weight);
-        return (items_copy, items_value, 1);
+        return (items_copy, current_value, 1);
     }
-    // if no value improvement is possible, stop searching (c)
+    // if no value improvement is possible, stop searching this branch and backtrack (c)
     if current_value + remaining_value <= best_value {
         // Make a copy of this assignment.
-        let mut items_copy = copy_items(items);
-        // Return the assignment and zero value.
-        return (items_copy, 0, 1);
+        return (Vec::new(), 0, 1);
 	}
     // Define saved solutions for later comparison
-    let mut solution_1: Vec<Item>;
+    let solution_1: Vec<Item>;
     let total_value_1: i32;
     let function_calls_1: i32;
-    let mut solution_2: Vec<Item>;
+    let solution_2: Vec<Item>;
     let total_value_2: i32;
     let function_calls_2: i32;
     // We do not have a full assignment.
@@ -148,40 +145,34 @@ fn do_branch_and_bound(items: &mut Vec<Item>, allowed_weight: i32, next_index: i
 		items[next_index as usize].is_selected = true;
         // Recursively call the function with adjusted vlaues.
         (solution_1, total_value_1, function_calls_1) = 
-            do_branch_and_bound(items, allowed_weight, next_index+1,
-           		best_value, 
+            do_branch_and_bound(items, allowed_weight, next_index+1, best_value, 
            		current_value + items[next_index as usize].value, 
            		current_weight + items[next_index as usize].weight, 
            		remaining_value - items[next_index as usize].value);
+        if total_value_1 > best_value {
+			best_value = total_value_1;
+		}
     } else {
         // stop searching this branch and backtrack (e)
-		// Make a copy of this assignment.
-        let mut items_copy2 = copy_items(items);
         // Return the assignment and zero value.
-        return (items_copy2, 0, 1);
+        solution_1 = Vec::new();
+        total_value_1 = 0;
+        function_calls_1 = 1;
 	}
     // If best_value is improved by NOT adding the next item (f)
-    if current_value + remaining_value - items[next_index as usize].value > best_value {
-        items[next_index as usize].is_selected = false;
-        // Recursively call the function.
-        (solution_2, total_value_2, function_calls_2) = 
-            do_branch_and_bound(items, allowed_weight, next_index+1, 
-                best_value, current_value, current_weight, 
-           	    remaining_value - items[next_index as usize].value);
-    } else {
-        // stop searching this branch and backtrack (g)
-		// Make a copy of this assignment.
-        let mut items_copy3 = copy_items(items);
-        // Return the assignment and zero value.
-        return (items_copy3, 0, 1);
-    }
+    items[next_index as usize].is_selected = false;
+    // Recursively call the function.
+    (solution_2, total_value_2, function_calls_2) = 
+        do_branch_and_bound(items, allowed_weight, next_index+1, 
+            best_value, current_value, current_weight, 
+           	remaining_value - items[next_index as usize].value);
     // Return the solution that is better (h)
     if total_value_1 >= total_value_2 {
     // print_selected(&mut solution_1);
-        return (solution_1, total_value_1, function_calls_1 + function_calls_2);
+        return (solution_1, total_value_1, function_calls_1 + function_calls_2 + 1);
     } else {
     // print_selected(&mut solution_2);
-        return (solution_2, total_value_2, function_calls_1 + function_calls_2);
+        return (solution_2, total_value_2, function_calls_1 + function_calls_2 + 1);
     }
 }
 // Return a copy of the items.
